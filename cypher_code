@@ -71,9 +71,15 @@ WITH row
 WHERE NOT row.`Sport` IN $idsToSkip AND NOT row.`Sport` IS NULL
 CALL {
   WITH row
-  MERGE (n: `SPORT` { `Sport`: row.`Sport` })
-  SET n.`Sport` = row.`Sport`
-  SET n.`Event` = row.`Event`
+  //MERGE (n: `SPORT` { `Sport`: row.`Sport` })
+  //SET n.`Sport` = row.`Sport`
+  //SET n.`Event` = row.`Event`
+
+  MERGE (n:SPORT { Sport: row.Sport, Event: row.Event })
+  //MERGE (n:SPORT_EVENT { key: row.Sport + ' - ' + row.Event })
+  SET n.Sport = row.Sport,
+      n.Event = row.Event
+
 } IN TRANSACTIONS OF 10000 ROWS;
 
 LOAD CSV WITH HEADERS FROM ($file_path_root + $file_0) AS row
