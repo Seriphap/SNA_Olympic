@@ -166,3 +166,19 @@ WITH
 ORDER BY gold DESC, silver DESC, bronze DESC
 RETURN country, gold, silver, bronze, total_medals
 LIMIT 10;
+
+MATCH (a:ATHLETES)-[:ATTEND_SPORT]->(s:SPORT)
+MATCH (a)-[:ATHLETE_MEDAL]->(m:MEDAL)
+MATCH (a)-[:IN_COUNTRY]->(n:NOC)
+WHERE m.Medal IN ['Gold', 'Silver', 'Bronze']
+WITH DISTINCT n.NOC AS Country, s.Sport + ' - ' + s.Event AS SportEvent, m.Medal AS Medal
+WITH Country,
+     COUNT(CASE WHEN Medal = 'Gold' THEN 1 END) AS Gold_Medals,
+     COUNT(CASE WHEN Medal = 'Silver' THEN 1 END) AS Silver_Medals,
+     COUNT(CASE WHEN Medal = 'Bronze' THEN 1 END) AS Bronze_Medals
+WITH Country, Gold_Medals, Silver_Medals, Bronze_Medals,
+     (Gold_Medals + Silver_Medals + Bronze_Medals) AS Total_Medals
+ORDER BY Total_Medals DESC
+LIMIT 10
+RETURN Country, Gold_Medals, Silver_Medals, Bronze_Medals, Total_Medals;
+
