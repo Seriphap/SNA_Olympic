@@ -1,0 +1,13 @@
+// จัดอันดับประเทศที่ได้เหรียญมากที่สุด
+MATCH (a:ATHLETES)-[:ATHLETE_MEDAL]->(m:MEDAL)
+MATCH (a)-[:IN_COUNTRY]->(c:NOC)
+WHERE m.Medal IS NOT NULL
+WITH 
+  c.NOC AS country,
+  count(m) AS total_medals,
+  count(CASE WHEN m.Medal = 'Gold' THEN 1 END) AS gold,
+  count(CASE WHEN m.Medal = 'Silver' THEN 1 END) AS silver,
+  count(CASE WHEN m.Medal = 'Bronze' THEN 1 END) AS bronze
+ORDER BY gold DESC, silver DESC, bronze DESC
+RETURN country, gold, silver, bronze, total_medals
+LIMIT 10;
