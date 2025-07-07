@@ -1,3 +1,4 @@
+// สร้าง Node และ Relationship
 :param {
   // Define the file path root and the individual file names required for loading.
   // https://neo4j.com/docs/operations-manual/current/configuration/file-locations/
@@ -151,9 +152,6 @@ CALL {
   MATCH (target: `YEAR` { `Year`: toInteger(trim(row.`Year`)) })
   MERGE (source)-[r: `COUNTRY_ATTEND_YEAR`]->(target)
 } IN TRANSACTIONS OF 10000 ROWS;
-
-
-
 
 // จัดอันดับประเทศที่ได้เหรียญมากที่สุด
 MATCH (a:ATHLETES)-[:ATHLETE_MEDAL]->(m:MEDAL)
