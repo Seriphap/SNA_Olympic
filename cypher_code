@@ -154,31 +154,19 @@ CALL {
 } IN TRANSACTIONS OF 10000 ROWS;
 
 // จัดอันดับประเทศที่ได้เหรียญมากที่สุด
-MATCH (a:ATHLETES)-[:ATHLETE_MEDAL]->(m:MEDAL)
-MATCH (a)-[:IN_COUNTRY]->(c:NOC)
-WHERE m.Medal IS NOT NULL
-WITH 
-  c.NOC AS country,
-  count(m) AS total_medals,
-  count(CASE WHEN m.Medal = 'Gold' THEN 1 END) AS gold,
-  count(CASE WHEN m.Medal = 'Silver' THEN 1 END) AS silver,
-  count(CASE WHEN m.Medal = 'Bronze' THEN 1 END) AS bronze
-ORDER BY gold DESC, silver DESC, bronze DESC
-RETURN country, gold, silver, bronze, total_medals
-LIMIT 10;
-
 MATCH (a:ATHLETES)-[:ATTEND_SPORT]->(s:SPORT)
 MATCH (a)-[:ATHLETE_MEDAL]->(m:MEDAL)
 MATCH (a)-[:IN_COUNTRY]->(n:NOC)
 WHERE m.Medal IN ['Gold', 'Silver', 'Bronze']
-WITH DISTINCT n.NOC AS Country, s.Sport + ' - ' + s.Event AS SportEvent, m.Medal AS Medal
-WITH Country,
+WITH DISTINCT n.NOC AS NOC_Code, s.Sport + ' - ' + s.Event AS SportEvent, m.Medal AS Medal
+WITH NOC_Code,
      COUNT(CASE WHEN Medal = 'Gold' THEN 1 END) AS Gold_Medals,
      COUNT(CASE WHEN Medal = 'Silver' THEN 1 END) AS Silver_Medals,
      COUNT(CASE WHEN Medal = 'Bronze' THEN 1 END) AS Bronze_Medals
-WITH Country, Gold_Medals, Silver_Medals, Bronze_Medals,
+WITH NOC_Code, Gold_Medals, Silver_Medals, Bronze_Medals,
      (Gold_Medals + Silver_Medals + Bronze_Medals) AS Total_Medals
 ORDER BY Total_Medals DESC
 LIMIT 10
-RETURN Country, Gold_Medals, Silver_Medals, Bronze_Medals, Total_Medals;
+RETURN NOC_Code, Gold_Medals, Silver_Medals, Bronze_Medals, Total_Medals;
+
 
